@@ -1,8 +1,6 @@
-# Graph Node Local Setup - Complete Guide
+# 🚀 Running Graph Node Locally on macOS (Apple M1/M2/M3) — Full Setup Guide
 
 This guide covers the complete, working, debugged setup of a local Graph Node using Postgres and IPFS in Docker, along with building the graph-node binary from source.
-
-# 🚀 Running Graph Node Locally on macOS (Apple M1/M2/M3) — Full Setup Guide
 
 ## 📘 Background & Context: Why This Setup Is Painful on Apple Silicon Macs
 
