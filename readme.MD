@@ -2,30 +2,26 @@
 
 This guide covers the complete, working, debugged setup of a local Graph Node using Postgres and IPFS in Docker, along with building the graph-node binary from source.
 
-⸻
+## ✅ Prerequisites
+- macOS (Tested on M3 MacBook Pro)
+- Docker & Docker Compose
+- Rust & Cargo (with Rustup)
+- Git
 
-✅ Prerequisites
-	•	macOS (Tested on M3 MacBook Pro)
-	•	Docker & Docker Compose
-	•	Rust & Cargo (with Rustup)
-	•	Git
-
-⸻
-
-1. Clone and Build Graph Node
-
-# Clone graph-node source
+## Clone graph-node source
+```sh
 mkdir ~/Developer
 cd ~/Developer
 https://github.com/graphprotocol/graph-node.git
 cd graph-node
+```
 
-# Build the release binary
+## Build the release binary
+```sh
 cargo build --release
+```
 
-⸻
-
-2. config.toml 
+## config.toml for graph node 
 
 ```toml
 [graph]
@@ -62,9 +58,9 @@ level = "info"
 port = 8040
 ```
 
-3. Docker Compose Setup
+## Docker Compose Setup
 
-Create a docker-compose.yml file under a sibling examples/ directory:
+- Create a docker-compose.yml file under a sibling examples/ directory:
 
 ```yaml
 version: "3.8"
@@ -115,9 +111,7 @@ volumes:
   ipfs_data:
 ```
 
-⸻
-
-4. init.sql - Postgres Role & DB Setup
+## init.sql - Postgres Role & DB Setup
 
  - Create init.sql in same examples/ directory:
 
@@ -137,31 +131,27 @@ CREATE DATABASE "graph-node"
   TEMPLATE = template0;
 ```
 
-⸻
-
-5. Start Docker
+## Start Docker
 
 ```sh
 cd ~/Developer/examples
 ```
 
-# Recreate containers and volumes
+## Recreate containers and volumes
 
 ```sh
 rm -rf ./pgdata
 ```
 
-# Start services
+## Start services
 
 ```sh
 docker compose up -d --force-recreate
 ```
 
-# Wait until Postgres and IPFS are healthy
+-  Wait until Postgres and IPFS are healthy
 
-⸻
-
-5. Validate DB Encoding and Locale
+## Validate DB Encoding and Locale
 
 ```sh
 docker exec -it examples-postgres psql -U graph-node -d graph-node -c "SHOW LC_COLLATE;"
@@ -169,16 +159,14 @@ docker exec -it examples-postgres psql -U graph-node -d graph-node -c "SHOW SERV
 ```
 
  - Expected output:
-	•	LC_COLLATE: C
-	•	SERVER_ENCODING: UTF8
+	- LC_COLLATE: C
+	- SERVER_ENCODING: UTF8
 
  - If not:
-	•	Destroy the volume: docker volume rm examples_pgdata
-	•	Recreate containers
+	- Destroy the volume: docker volume rm examples_pgdata
+	- Recreate containers
 
-⸻
-
-6. Run Graph Node Locally
+## Run Graph Node Locally
 
 ```sh
 cd ~/Developer/graph-node
@@ -187,11 +175,10 @@ cd ~/Developer/graph-node
   --ipfs 192.168.0.41:5001
 ```
 
-Replace IPFS IP with docker inspect examples-ipfs if needed.
+- Replace IPFS IP with docker inspect examples-ipfs if needed.
 
-⸻
 
-7. Health Checks (No Subgraphs Yet)
+## Health Checks (No Subgraphs Yet)
 
 ```sh
 curl http://localhost:8040/metrics
@@ -202,27 +189,23 @@ curl http://localhost:8040/metrics
   - eth_rpc_status{provider="local"} 0 ✅ Healthy
   - store_connection_error_count 0 ✅ Good
 
-⸻
-
-🛠️ Troubleshooting
+## 🛠️ Troubleshooting
 
 - Issue: SQL_ASCII encoding
     - Happens when Postgres creates DB with default LC/ENCODING
-	- Solution: Use TEMPLATE = template0 in init.sql
+    - Solution: Use TEMPLATE = template0 in init.sql
 
 - Issue: Role doesn’t exist
-	- Check logs: docker logs examples-postgres
+    - Check logs: docker logs examples-postgres
 	- Ensure init.sql ran (check docker-compose.yml volume mount)
 
-Issue: permission denied to create extension "postgres_fdw"
+- Issue: permission denied to create extension "postgres_fdw"
 	- Your graph-node role must be SUPERUSER
 
-Issue: Graph node panics
+ - Issue: Graph node panics
 	- Usually caused by invalid Postgres config, bad locale, or encoding mismatch
 
-⸻
-
-✅ Final Output on Success
+## ✅ Final Output on Success
 
 ```
 INFO Successfully connected to IPFS RPC API at: '192.168.0.41:5001'
@@ -232,16 +215,12 @@ INFO Starting GraphQL HTTP server at: http://localhost:8000
 INFO Metrics server at: http://localhost:8040
 ```
 
-⸻
+## 📌 Next Steps
+- Deploy a subgraph using graph deploy ...
+- Point a frontend dApp to http://localhost:8000/subgraphs/name/...
 
-📌 Next Steps
-	- Deploy a subgraph using graph deploy ...
-	- Point a frontend dApp to http://localhost:8000/subgraphs/name/...
-
-⸻
-
-For any issues, recheck:
-	- Docker logs (docker logs examples-postgres)
-	- Health output (curl localhost:8040/metrics)
-	- Encoding (SHOW SERVER_ENCODING;)
-	- Locale (SHOW LC_COLLATE;)
+## For any issues, recheck:
+- Docker logs (docker logs examples-postgres)
+- Health output (curl localhost:8040/metrics)
+- Encoding (SHOW SERVER_ENCODING;)
+- Locale (SHOW LC_COLLATE;)
