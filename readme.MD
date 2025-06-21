@@ -218,6 +218,12 @@ docker volume rm examples_pgdata
 
 ```
 
+## Run anvil EVM instance
+
+```sh
+anvil
+```
+
 ## Run Graph Node Locally
 
 ```sh
