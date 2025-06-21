@@ -58,6 +58,7 @@ cd ~/Developer
 mkdir config
 touch config.toml
 touch docker-compose.yml
+touch init.sql
 ```
 
 ## config.toml for graph node 
@@ -154,7 +155,7 @@ volumes:
 
 ## init.sql - Postgres Role & DB Setup
 
- - Create init.sql in same examples/ directory:
+ - copy below content in to  `init.sql` in same `config/` directory:
 
 ```sql
 - Drop and recreate the graph-node role
