@@ -39,11 +39,34 @@ cd graph-node
 cargo build --release
 ```
 
+## identify the host for the machine
+
+```sh
+ipconfig getifaddr en0
+```
+
+- sample output:
+
+```
+192.118.0.41
+```
+
+## configuration directory
+
+```sh
+cd ~/Developer
+mkdir config
+touch config.toml
+touch docker-compose.yml
+```
+
 ## config.toml for graph node 
+
+- copy the below content in `config/config.toml`
 
 ```toml
 [graph]
-ipfs = "http://192.168.0.41:5001"
+ipfs = "http://192.118.0.41:5001"
 
 [store]
 [store.primary]
@@ -78,7 +101,7 @@ port = 8040
 
 ## Docker Compose Setup
 
-- Create a docker-compose.yml file under a sibling examples/ directory:
+- copy the below content in `docker-compose.yml` file under the sibling `config/` directory:
 
 ```yaml
 version: "3.8"
@@ -176,21 +199,34 @@ docker exec -it examples-postgres psql -U graph-node -d graph-node -c "SHOW LC_C
 docker exec -it examples-postgres psql -U graph-node -d graph-node -c "SHOW SERVER_ENCODING;"
 ```
 
- - Expected output:
-	- LC_COLLATE: C
-	- SERVER_ENCODING: UTF8
+### Expected output:
+- LC_COLLATE: C
+- SERVER_ENCODING: UTF8
 
- - If not:
-	- Destroy the volume: docker volume rm examples_pgdata
-	- Recreate containers
+- If not then:
+
+1. Destroy the volume: 
+
+```sh
+docker volume rm examples_pgdata
+```
+
+- Recreate containers
+
+```sh
+
+```
 
 ## Run Graph Node Locally
 
 ```sh
 cd ~/Developer/graph-node
-./target/release/graph-node \
-  --config ../examples/config.toml \
-  --ipfs 192.168.0.41:5001
+```
+
+```sh
+./target/release/graph-node \                        
+  --config config/config.toml \
+  --ipfs 192.118.0.41:5001
 ```
 
 - Replace IPFS IP with docker inspect examples-ipfs if needed.
@@ -226,7 +262,7 @@ curl http://localhost:8040/metrics
 ## ✅ Final Output on Success
 
 ```
-INFO Successfully connected to IPFS RPC API at: '192.168.0.41:5001'
+INFO Successfully connected to IPFS RPC API at: '192.118.0.41:5001'
 INFO Pool successfully connected to Postgres
 INFO Migrations finished
 INFO Starting GraphQL HTTP server at: http://localhost:8000
