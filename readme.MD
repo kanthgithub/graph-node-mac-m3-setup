@@ -2,6 +2,26 @@
 
 This guide covers the complete, working, debugged setup of a local Graph Node using Postgres and IPFS in Docker, along with building the graph-node binary from source.
 
+# 🚀 Running Graph Node Locally on macOS (Apple M1/M2/M3) — Full Setup Guide
+
+## 📘 Background & Context: Why This Setup Is Painful on Apple Silicon Macs
+
+Running [**Graph Node**](https://github.com/graphprotocol/graph-node) locally on **Apple Silicon (M1/M2/M3)** involves unique issues due to architecture incompatibility and strict Graph Node requirements.
+
+| ⚠️ Issue | 🔍 Why It Happens | ❌ Impact |
+|---------|------------------|----------|
+| Graph Node not available for ARM (aarch64-apple-darwin) | Prebuilt binaries are x86_64 only | Must compile Graph Node from source |
+| Docker images not multi-arch | PostgreSQL, IPFS, Graph Node Docker images may break on ARM | Segfaults, encoding issues |
+| Encoding and locale mismatch | Docker Postgres ignores `init.sql` under ARM if locale is not explicitly set | `server_encoding = SQL_ASCII`, `permission denied for postgres_fdw` |
+| IPFS ports or volume setup missing | Health checks fail on `localhost:5001` | Graph Node can't reach IPFS |
+| Graph Node requires `postgres_fdw` | Postgres image must allow superuser role to enable FDW | Store setup fails at startup |
+
+> **Why still do this?**  
+> ✅ Run subgraphs locally  
+> ✅ Debug internal Graph Node features  
+> ✅ Test custom smart contracts and indexing logic  
+> ✅ Avoid relying on Hosted Service
+
 ## ✅ Prerequisites
 - macOS (Tested on M3 MacBook Pro)
 - Docker & Docker Compose
